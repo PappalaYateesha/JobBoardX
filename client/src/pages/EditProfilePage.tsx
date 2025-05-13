@@ -7,7 +7,7 @@ import {
 } from '@mui/material';
 import { Formik, Form, FieldArray } from 'formik';
 import * as Yup from 'yup';
-import axios from 'axios';
+import axios from "../services/axiosInstance"
 import { useNavigate } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
@@ -75,7 +75,7 @@ const EditProfilePage = () => {
     const fetchProfile = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get('http://localhost:5000/api/profile/me', {
+        const res = await axios.get('/api/profile/me', {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = res.data;
@@ -141,7 +141,7 @@ const EditProfilePage = () => {
           onSubmit={async (values, { setSubmitting }) => {
             try {
               const token = localStorage.getItem('token');
-              await axios.put('http://localhost:5000/api/profile', values, {
+              await axios.put('/api/profile', values, {
                 headers: {
                   Authorization: `Bearer ${token}`,
                   'Content-Type': 'application/json',

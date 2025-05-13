@@ -3,7 +3,7 @@ import {
   Box, Typography, Paper, CircularProgress, Chip, Divider, Stack, Avatar, Link, Card, CardContent, Button
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axios from '../services/axiosInstance';
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -14,7 +14,7 @@ const ProfilePage = () => {
     const fetchProfile = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get('http://localhost:5000/api/profile/me', {
+        const res = await axios.get('/api/profile/me', {
           headers: { Authorization: `Bearer ${token}` },
         });
         setProfile(res.data);

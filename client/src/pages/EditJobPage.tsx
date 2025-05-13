@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Formik, Form, FieldArray, ErrorMessage } from 'formik';
 import { TextField, Button, MenuItem, Checkbox, FormControlLabel } from '@mui/material';
 import * as Yup from 'yup';
-import axios from 'axios';
+import axios from '../services/axiosInstance';
 
 const EditJobPage = () => {
   const { id } = useParams();
@@ -14,7 +14,7 @@ const EditJobPage = () => {
     const fetchJob = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get(`http://localhost:5000/api/jobs/${id}`, {
+        const response = await axios.get(`/api/jobs/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setJob(response.data);
@@ -46,7 +46,7 @@ const EditJobPage = () => {
   const handleSubmit = async (values: any) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.put(`http://localhost:5000/api/jobs/${id}`, values, {
+      await axios.put(`/api/jobs/${id}`, values, {
         headers: { Authorization: `Bearer ${token}` },
       });
       alert('Job updated successfully!');

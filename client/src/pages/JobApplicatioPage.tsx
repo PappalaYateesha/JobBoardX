@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Button, TextField, Box, Typography } from '@mui/material';
 import { Formik, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import axios from 'axios';
+import axios from '../services/axiosInstance';
 import { decodeToken } from '../utils/decodeToken';
 
 const JobApplicationPage = () => {
@@ -13,7 +13,7 @@ const JobApplicationPage = () => {
   useEffect(() => {
     const fetchJobDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/jobs/${jobId}`);
+        const response = await axios.get(`/api/jobs/${jobId}`);
         setJob(response.data);
       } catch (error) {
         console.error('Error fetching job details:', error);
@@ -49,7 +49,7 @@ const JobApplicationPage = () => {
       };
 
       await axios.post(
-        `http://localhost:5000/api/applications/apply/${jobId}`,
+        `/api/applications/apply/${jobId}`,
         applicationData,
         {
           headers: { Authorization: `Bearer ${token}` },

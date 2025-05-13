@@ -2,7 +2,7 @@ import React from 'react';
 import { Formik, Form, ErrorMessage } from 'formik';
 import { TextField, Button, Typography, Box, Paper, useMediaQuery, useTheme } from '@mui/material';
 import * as Yup from 'yup';
-import axios from 'axios';
+import axios from '../services/axiosInstance';
 import { useNavigate, Link } from 'react-router-dom';
 
 const LoginPage = () => {
@@ -22,7 +22,7 @@ const LoginPage = () => {
 
   const handleSubmit = async (values: typeof initialValues) => {
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/login', values);
+      const response = await axios.post('/api/auth/login', values);
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
       window.dispatchEvent(new Event('authChange'));

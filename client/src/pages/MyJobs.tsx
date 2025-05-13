@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {Typography,Box,Snackbar,Alert,CircularProgress,Chip,Table,TableBody,TableCell,TableContainer,TableHead,TableRow,Paper,IconButton,Tooltip,
   Button} from '@mui/material';
-import axios from 'axios';
+import axios from '../services/axiosInstance';
 import { Link } from 'react-router-dom';
 import EditIcon from '@mui/icons-material/Edit';
 import GroupIcon from '@mui/icons-material/Group';
@@ -25,7 +25,7 @@ const MyJobsPage = () => {
     const fetchJobs = async () => {
       setLoading(true);
       try {
-        const response = await axios.get('http://localhost:5000/api/jobs/my-jobs', {
+        const response = await axios.get('/api/jobs/my-jobs', {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         });
         setJobs(response.data);
@@ -42,7 +42,7 @@ const MyJobsPage = () => {
   const handleDelete = async (id: string) => {
     if (!window.confirm('Are you sure you want to delete this job?')) return;
     try {
-      await axios.delete(`http://localhost:5000/api/jobs/${id}`, {
+      await axios.delete(`/api/jobs/${id}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       });
       setJobs((prevJobs) => prevJobs.filter((job) => job._id !== id));

@@ -5,7 +5,7 @@ import {
   Snackbar, Alert
 } from '@mui/material';
 import * as Yup from 'yup';
-import axios from 'axios';
+import axios from '../services/axiosInstance';
 import { useNavigate } from 'react-router-dom';
 
 const PostJobPage = () => {
@@ -80,7 +80,7 @@ const PostJobPage = () => {
         status: values.status
       };
 
-      await axios.post('http://localhost:5000/api/jobs', payload, {
+      await axios.post('/api/jobs', payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

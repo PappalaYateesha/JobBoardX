@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import axios from '../services/axiosInstance';
 import {Box,Button,Card,CardActions,CardContent,Chip,Typography,Avatar,Stack} from '@mui/material';
 import { Link } from 'react-router-dom';
 
@@ -10,7 +10,7 @@ const SavedJobsPage = () => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/jobs');
+        const response = await axios.get('/api/jobs');
         setJobs(response.data);
       } catch (error) {
         console.error('Error fetching jobs:', error);

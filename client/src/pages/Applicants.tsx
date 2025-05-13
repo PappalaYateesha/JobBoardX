@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import axios from "../services/axiosInstance";
 import {Avatar,Box,Button,Container,FormControl,MenuItem,Select,Snackbar,Alert,Stack,Typography,Table,TableBody,TableCell,TableContainer,TableHead,
   TableRow,Paper,Chip,IconButton,Collapse} from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -40,7 +40,7 @@ const Applicants = () => {
       try {
         const token = localStorage.getItem('token');
         const response = await axios.get(
-          `http://localhost:5000/api/applications/job/${id}`,
+          `/api/applications/job/${id}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setApplicants(response.data);
@@ -62,7 +62,7 @@ const Applicants = () => {
     try {
       const token = localStorage.getItem('token');
       await axios.put(
-        `http://localhost:5000/api/applications/${applicationId}/status`,
+        `/api/applications/${applicationId}/status`,
         { status: newStatus },
         { headers: { Authorization: `Bearer ${token}` } }
       );

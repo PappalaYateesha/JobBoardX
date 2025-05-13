@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import axios from '../services/axiosInstance';
 import {Accordion,AccordionSummary,AccordionDetails,Box,Button,Chip,Container,Typography,TextField,MenuItem,Select,InputLabel,FormControl,Pagination
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -31,7 +31,7 @@ const MyApplications = () => {
     const fetchApplications = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get('http://localhost:5000/api/applications/me', {
+        const res = await axios.get('/api/applications/me', {
           headers: { Authorization: `Bearer ${token}` },
         });
         setApplications(res.data);
@@ -76,7 +76,7 @@ const MyApplications = () => {
   const handleDeleteApplication = async (appId: string) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:5000/api/applications/${appId}`, {
+      await axios.delete(`/api/applications/${appId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setApplications((prev) => prev.filter((a) => a._id !== appId));

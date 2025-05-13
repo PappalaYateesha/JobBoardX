@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import axios from '../services/axiosInstance';
 import JobFilters, { FilterState } from '../components/JobFilters';
 import {Box,Button,Card,Chip,TextField,Typography,Avatar,InputAdornment,Stack,IconButton} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
@@ -25,7 +25,7 @@ const JobListPage = () => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/jobs');
+        const response = await axios.get('/api/jobs');
         setJobs(response.data);
       } catch (error) {
         console.error('Error fetching jobs:', error);

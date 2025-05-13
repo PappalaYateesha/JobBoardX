@@ -6,7 +6,7 @@ import {
 } from '@mui/material';
 import ApplyModal from '../components/ApplyModal';
 import { useJobDetails } from '../hooks/useJobDetails';
-import axios from 'axios';
+import axios from '../services/axiosInstance';
 
 const JobDetailsPage = () => {
   const { id } = useParams();
@@ -41,7 +41,7 @@ const JobDetailsPage = () => {
 
       setLoading(true);
       const response = await axios.post(
-        'http://localhost:5000/api/applications',
+        '/api/applications',
         { resumeLink, coverLetter, jobId },
         { headers: { Authorization: `Bearer ${token}` } }
       );

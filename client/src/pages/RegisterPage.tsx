@@ -1,7 +1,7 @@
 import React from 'react';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
-import axios from 'axios';
+import axios from '../services/axiosInstance';
 import { useNavigate } from 'react-router-dom';
 import {Box,Button,TextField,MenuItem,Typography,Paper,useMediaQuery,useTheme} from '@mui/material';
 
@@ -32,7 +32,7 @@ const RegisterPage = () => {
 
   const onSubmit = async (values: typeof initialValues) => {
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/register', values);
+      const res = await axios.post('/api/auth/register', values);
       localStorage.setItem('token', res.data.token);
       navigate('/profile');
     } catch (error: any) {
