@@ -1,17 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import {
-  Box,
-  Button,
-  Container,
-  Typography,
-  Card,
-  CardContent,
-} from '@mui/material';
+import {Box,Container,Typography} from '@mui/material';
 import WorkIcon from '@mui/icons-material/Work';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import { decodeToken } from '../utils/decodeToken';
 import LatestJobs from '../components/LatestJobs';
+import HeroSection from '../components/HeroSection';
+import ActionCard from '../components/ActionCard';
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -73,46 +68,12 @@ const HomePage = () => {
   return (
     <Box sx={{ background: 'linear-gradient(135deg, #dfe9f3 0%, #ffffff 100%)', minHeight: '100vh' }}>
       {/* Hero Section */}
-      <Box
-        sx={{
-          backdropFilter: 'blur(10px)',
-          background: 'linear-gradient(135deg, rgba(122,95,255,0.9) 0%, rgba(168,144,255,0.8) 100%)',
-          color: 'white',
-          borderRadius: 6,
-          my: 6,
-          mx: 'auto',
-          p: 6,
-          maxWidth: 800,
-          textAlign: 'center',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
-        }}
-      >
-        <Typography variant="h3" fontWeight="bold" mb={2}>
-          {userName ? `${getGreeting()}, ${userName}` : 'Discover Your Dream Job'}
-        </Typography>
-        <Typography variant="subtitle1" mb={3}>
-          {userName ? today : 'Join thousands of job seekers and employers'}
-        </Typography>
-        <Button
-          variant="contained"
-          onClick={() => navigate('/jobs')}
-          sx={{
-            background: 'white',
-            color: '#7A5FFF',
-            px: 4,
-            py: 1.5,
-            borderRadius: 3,
-            fontWeight: 'bold',
-            boxShadow: 3,
-            '&:hover': {
-              background: '#f1f5ff',
-            },
-          }}
-        >
-          {userName ? 'Explore Opportunities' : 'Get Started'}
-        </Button>
-      </Box>
-
+      <HeroSection
+      userName={userName}
+      greeting={getGreeting()}
+      date={today}
+      onCTA={() => navigate('/jobs')}
+      />
       {/* Action Cards */}
       {userName && (
         <Container sx={{ my: 6 }}>
@@ -168,45 +129,5 @@ const HomePage = () => {
   );
 };
 
-const ActionCard = ({
-  icon,
-  title,
-  description,
-  onClick,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-  onClick: () => void;
-}) => (
-  <Card
-    onClick={onClick}
-    sx={{
-      width: 280,
-      p: 3,
-      borderRadius: 4,
-      textAlign: 'center',
-      cursor: 'pointer',
-      background: 'rgba(255, 255, 255, 0.6)',
-      boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
-      backdropFilter: 'blur(10px)',
-      '&:hover': {
-        boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
-        transform: 'translateY(-5px)',
-        transition: 'all 0.3s ease',
-      },
-    }}
-  >
-    <CardContent>
-      <Box mb={1}>{icon}</Box>
-      <Typography variant="h6" fontWeight="bold" mb={1}>
-        {title}
-      </Typography>
-      <Typography variant="body2" color="text.secondary">
-        {description}
-      </Typography>
-    </CardContent>
-  </Card>
-);
 
 export default HomePage;

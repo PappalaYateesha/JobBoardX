@@ -1,27 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from "../services/axiosInstance";
-import {Avatar,Box,Button,Container,FormControl,MenuItem,Select,Snackbar,Alert,Stack,Typography,Table,TableBody,TableCell,TableContainer,TableHead,
-  TableRow,Paper,Chip,IconButton,Collapse} from '@mui/material';
+import {Button,Container,Snackbar,Alert,Typography,Table,TableBody,TableCell,TableContainer,TableHead,
+  TableRow,Paper} from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ExpandMore, ExpandLess } from '@mui/icons-material';
+import ApplicantRow from '../components/ApplicantsRow';
+import PaginationControl from '../components/PaginationControl';
 
-const statusOptions = ['Applied', 'Reviewed', 'Accepted', 'Rejected'];
-
-const statusColor = (status: string) => {
-  switch (status) {
-    case 'Reviewed':
-      return 'info';
-    case 'Accepted':
-      return 'success';
-    case 'Rejected':
-      return 'error';
-    default:
-      return 'default';
-  }
-};
-
-const getInitials = (name: string) =>
-  name?.split(' ').map((word) => word[0]).join('').toUpperCase();
 
 const Applicants = () => {
   const { id } = useParams();
@@ -34,6 +18,12 @@ const Applicants = () => {
     message: '',
     severity: 'success' as 'success' | 'error',
   });
+  const [page, setPage] = useState(1);
+  const ITEMS_PER_PAGE = 10;
+  const paginatedApplicants = applicants.slice(
+  (page - 1) * ITEMS_PER_PAGE,
+  page * ITEMS_PER_PAGE
+);
 
   useEffect(() => {
     const fetchApplicants = async () => {
@@ -106,101 +96,36 @@ const Applicants = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {applicants.map((app) => (
-                <>
-                  <TableRow key={app._id}>
-                    <TableCell>
-                      <Stack direction="row" alignItems="center" spacing={2}>
-                        <Avatar sx={{ bgcolor: '#7A5FFF' }}>
-                          {getInitials(app.applicant?.name || 'U')}
-                        </Avatar>
-                        <Typography>{app.applicant?.name || 'Unnamed'}</Typography>
-                      </Stack>
-                    </TableCell>
-                    <TableCell>{app.applicant?.email || 'N/A'}</TableCell>
-                    <TableCell>
-                      <Chip
-                        label={statusMap[app._id]}
-                        color={statusColor(statusMap[app._id])}
-                        size="small"
-                        sx={{ fontWeight: 500 }}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <FormControl size="small" fullWidth>
-                        <Select
-                          value={statusMap[app._id]}
-                          onChange={(e) =>
-                            setStatusMap({ ...statusMap, [app._id]: e.target.value })
-                          }
-                        >
-                          {statusOptions.map((status) => (
-                            <MenuItem key={status} value={status}>
-                              {status}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                      <Button
-                        variant="outlined"
-                        fullWidth
-                        size="small"
-                        sx={{ mt: 1 }}
-                        disabled={statusMap[app._id] === app.status}
-                        onClick={() => handleStatusChange(app._id, statusMap[app._id])}
-                      >
-                        Update
-                      </Button>
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        variant="contained"
-                        href={app.resumeLink}
-                        target="_blank"
-                        sx={{
-                          backgroundColor: '#7A5FFF',
-                          '&:hover': { backgroundColor: '#684ef0' },
-                          textTransform: 'none',
-                        }}
-                      >
-                        View
-                      </Button>
-                    </TableCell>
-                    <TableCell>
-                      <IconButton
-                        onClick={() =>
-                          setExpanded((prev) => ({
-                            ...prev,
-                            [app._id]: !prev[app._id],
-                          }))
-                        }
-                      >
-                        {expanded[app._id] ? <ExpandLess /> : <ExpandMore />}
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-
-                  <TableRow>
-                    <TableCell colSpan={6} sx={{ py: 0 }}>
-                      <Collapse in={expanded[app._id]}>
-                        <Box sx={{ p: 2, backgroundColor: '#f9fafb' }}>
-                          <Typography variant="body2" whiteSpace="pre-wrap">
-                            {app.coverLetter || 'No cover letter provided.'}
-                          </Typography>
-                        </Box>
-                      </Collapse>
-                    </TableCell>
-                  </TableRow>
-                </>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              {paginatedApplicants.map((app) => (
+                <ApplicantRow
+                key={app._id}
+                app={app}
+                status={statusMap[app._id]}
+                onSelectChange={(id, newStatus) =>
+                  setStatusMap((prev) => ({ ...prev, [id]: newStatus }))
+                   }
+                   onStatusChange={handleStatusChange}
+                   expanded={!!expanded[app._id]}
+                   toggleExpand={(id) =>
+                    setExpanded((prev) => ({ ...prev, [id]: !prev[id] }))
+                  }
+                  />
+                  ))}
+                  </TableBody>
+                  </Table>
+                  </TableContainer>
+                  
       ) : (
         <Typography mt={5} align="center" color="text.secondary">
           No applicants have applied yet.
         </Typography>
       )}
+<PaginationControl
+  currentPage={page}
+  totalItems={applicants.length}
+  itemsPerPage={ITEMS_PER_PAGE}
+  onPageChange={setPage}
+/>
 
       <Snackbar
         open={snackbar.open}

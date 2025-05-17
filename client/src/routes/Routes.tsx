@@ -8,7 +8,6 @@ import ProtectedRoute from '../components/ProtectedRoute';
 import Layout from '../components/Layout';
 import RegisterPage from '../pages/RegisterPage';
 import PostJobPage from '../pages/PostJobPage';
-import JobApplicationPage from '../pages/JobApplicatioPage';
 import EditJobPage from '../pages/EditJobPage';
 import MyJobsPage from '../pages/MyJobs';
 import Applicants from '../pages/Applicants';
@@ -30,7 +29,6 @@ const AppRoutes = () => {
         
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/apply/:jobId" element={<JobApplicationPage />} />
         <Route path="/employer/jobs/:id/edit" element={<EditJobPage />} />
         <Route element={<ProtectedRoute />}>
         <Route element={<Layout />}>

@@ -4,6 +4,9 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import axios from '../services/axiosInstance';
+import ProfileHeader from '../components/ProfileHeader';
+import ProfileDetails from '../components/ProfileDetails';
+import ProfileExperienceEducation from '../components/ProfileExperienceEducation';
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -52,102 +55,25 @@ const ProfilePage = () => {
         backdropFilter: 'blur(10px)',
         background: 'rgba(255, 255, 255, 0.9)'
       }}>
-        <Stack direction="row" spacing={2} alignItems="center" mb={2}>
-          <Avatar
-            src={profile.avatar || '/default-avatar.jpg'}
-            sx={{ width: 72, height: 72, bgcolor: '#7A5FFF' }}
-          >
-            {profile?.user?.name?.charAt(0) || 'U'}
-          </Avatar>
-          <Box>
-            <Typography variant="h4" fontWeight={600}>{profile.user?.name || 'No Name'}</Typography>
-            <Typography color="text.secondary">{profile.headline || 'No headline provided.'}</Typography>
-          </Box>
-        </Stack>
-
-        <Divider sx={{ my: 3 }} />
-
-        {/* Bio & Contact */}
-        <Box mb={3}>
-          <Typography variant="h6" gutterBottom>Bio</Typography>
-          <Typography>{profile.bio || 'No bio provided.'}</Typography>
-        </Box>
-
-        <Box mb={3}>
-          <Typography variant="h6" gutterBottom>Contact</Typography>
-          <Typography><strong>Location:</strong> {profile.location || 'N/A'}</Typography>
-          <Typography><strong>Phone:</strong> {profile.phone || 'N/A'}</Typography>
-          {profile.website && (
-            <Typography>
-              <strong>Website:</strong>{' '}
-              <Link href={profile.website} target="_blank" rel="noopener">Visit</Link>
-            </Typography>
-          )}
-        </Box>
-
-        {/* Skills */}
-        <Box mb={3}>
-          <Typography variant="h6" gutterBottom>Skills</Typography>
-          <Stack direction="row" spacing={1} flexWrap="wrap">
-            {profile.skills?.length > 0 ? (
-              profile.skills.map((skill: string, idx: number) => (
-                <Chip key={idx} label={skill} color="primary" variant="outlined" />
-              ))
-            ) : (
-              <Typography>No skills listed.</Typography>
-            )}
-          </Stack>
-        </Box>
-
-        {/* Experience */}
-        <Box mb={3}>
-          <Typography variant="h6" gutterBottom>Experience</Typography>
-          {profile.experience?.map((exp: any, index: number) => (
-            <Card key={index} variant="outlined" sx={{ mb: 2, borderRadius: 3 }}>
-              <CardContent>
-                <Typography variant="subtitle1" fontWeight={600}>
-                  {exp.title} @ {exp.company}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {new Date(exp.from).toLocaleDateString()} - {exp.current ? 'Present' : new Date(exp.to).toLocaleDateString()}
-                </Typography>
-                {exp.description && <Typography mt={1}>{exp.description}</Typography>}
-              </CardContent>
-            </Card>
-          ))}
-        </Box>
-
-        {/* Education */}
-        <Box mb={3}>
-          <Typography variant="h6" gutterBottom>Education</Typography>
-          {profile.education?.map((edu: any, index: number) => (
-            <Card key={index} variant="outlined" sx={{ mb: 2, borderRadius: 3 }}>
-              <CardContent>
-                <Typography variant="subtitle1" fontWeight={600}>
-                  {edu.degree} in {edu.fieldOfStudy}
-                </Typography>
-                <Typography>{edu.school}</Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {new Date(edu.from).toLocaleDateString()} - {edu.current ? 'Present' : new Date(edu.to).toLocaleDateString()}
-                </Typography>
-                {edu.description && <Typography mt={1}>{edu.description}</Typography>}
-              </CardContent>
-            </Card>
-          ))}
-        </Box>
-
-        {/* Social Links */}
-        <Box mb={2}>
-          <Typography variant="h6" gutterBottom>Social Profiles</Typography>
-          <Stack spacing={1}>
-            {profile.linkedin && (
-              <Link href={profile.linkedin} target="_blank" rel="noopener">LinkedIn</Link>
-            )}
-            {profile.github && (
-              <Link href={profile.github} target="_blank" rel="noopener">GitHub</Link>
-            )}
-          </Stack>
-        </Box>
+        <ProfileHeader 
+  user={profile.user} 
+  avatar={profile.avatar} 
+  headline={profile.headline} 
+/>
+<Divider sx={{ my: 3 }} />
+<ProfileDetails
+  bio={profile.bio}
+  location={profile.location}
+  phone={profile.phone}
+  website={profile.website}
+  skills={profile.skills}
+  linkedin={profile.linkedin}
+  github={profile.github}
+/>
+<ProfileExperienceEducation
+  experience={profile.experience}
+  education={profile.education}
+/>
 
         {/* Edit Profile Button */}
         <Box mt={4}>

@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from '../services/axiosInstance';
 import JobFilters, { FilterState } from '../components/JobFilters';
-import {Box,Button,Card,Chip,TextField,Typography,Avatar,InputAdornment,Stack,IconButton} from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
-import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
-import { Link } from 'react-router-dom';
+import {Box,Typography} from '@mui/material';
+import JobCard from '../components/JobCard';
+import SearchBar from '../components/SearchBar';
 
 const JobListPage = () => {
   const [jobs, setJobs] = useState<any[]>([]);
@@ -105,195 +103,28 @@ const JobListPage = () => {
 
   return (
     <Box sx={{ display: 'flex', bgcolor: '#F8F4FF', minHeight: '100vh', px: 4, py: 6, gap: 4 }}>
+
       {/* Sidebar Filters */}
       <Box sx={{ width: 260 }}>
         <JobFilters onFilterChange={handleFilterChange} />
       </Box>
 
-      {/* Job List Area */}
       <Box sx={{ flexGrow: 1 }}>
-        <TextField
-          fullWidth
-          variant="outlined"
-          placeholder="What are you looking for?"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
-            ),
-            sx: {
-              borderRadius: 8,
-              backgroundColor: '#fff',
-              boxShadow: 1,
-              px: 1,
-              py: 0.5,
-            },
-          }}
-        />
+        
+        {/* Search Bar */}
+        <SearchBar value={searchTerm} onChange={setSearchTerm} />
 
-        {/* Jobs Grid */}
         <Box mt={4} display="flex" flexWrap="wrap" gap={3} justifyContent="flex-start">
+      
+          {/* Job Cards */}
           {filteredJobs.map((job) => (
-           <Card
-           key={job._id}
-           sx={{
-             width: 280,
-             p: 2,
-             borderRadius: 5,
-             background: 'linear-gradient(to bottom right, #fdfbff, #f3f3f9)',
-             boxShadow: '0 8px 30px rgba(0, 0, 0, 0.04)',
-             border: '1px solid #f1f5f9',
-             position: 'relative',
-             transition: 'all 0.3s ease',
-             '&:hover': {
-               transform: 'translateY(-4px)',
-               boxShadow: '0 12px 24px rgba(0, 0, 0, 0.08)',
-             },
-           }}
-         >
-           {/* Bookmark */}
-           <IconButton
-             onClick={() => toggleSaveJob(job._id)}
-             sx={{
-               position: 'absolute',
-               top: 12,
-               right: 12,
-               color: savedJobs.includes(job._id) ? '#7A5FFF' : '#cbd5e1',
-               transition: 'color 0.3s',
-               '&:hover': { color: '#7A5FFF' },
-             }}
-           >
-             {savedJobs.includes(job._id) ? <BookmarkIcon /> : <BookmarkBorderIcon />}
-           </IconButton>
-         
-           {/* Company Info */}
-           <Stack direction="row" alignItems="center" spacing={1} mb={1}>
-             <Avatar sx={{ bgcolor: '#7A5FFF', fontSize: 14 }}>
-               {job.company?.charAt(0)}
-             </Avatar>
-             <Typography variant="body2" color="text.secondary">
-               {job.company} · {job.location}
-             </Typography>
-           </Stack>
-         
-           {/* Job Title */}
-           <Typography variant="h6" fontWeight={600} sx={{ mb: 1 }}>
-             {job.title}
-           </Typography>
-         
-           {/* Tags */}
-           <Box display="flex" flexWrap="wrap" gap={1} mb={2}>
-             <Chip
-               label={`${job.numberOfOpenings || 1} Positions`}
-               size="small"
-               sx={{
-                 backgroundColor: '#DCFCE7',
-                 color: '#15803D',
-                 fontWeight: 500,
-                 fontSize: 12,
-                 height: 24,
-                 borderRadius: 2,
-               }}
-             />
-             <Chip
-               label={job.employmentType || 'Full-time'}
-               size="small"
-               sx={{
-                 backgroundColor: '#FEF9C3',
-                 color: '#CA8A04',
-                 fontWeight: 500,
-                 fontSize: 12,
-                 height: 24,
-                 borderRadius: 2,
-               }}
-             />
-             <Chip
-               label={job.isRemote ? 'Remote' : 'WFO'}
-               size="small"
-               sx={{
-                 backgroundColor: '#DBEAFE',
-                 color: '#2563EB',
-                 fontWeight: 500,
-                 fontSize: 12,
-                 height: 24,
-                 borderRadius: 2,
-               }}
-             />
-             <Chip
-               label={job.experienceLevel || 'Any level'}
-               size="small"
-               sx={{
-                 backgroundColor: '#E0E7FF',
-                 color: '#4338CA',
-                 fontWeight: 500,
-                 fontSize: 12,
-                 height: 24,
-                 borderRadius: 2,
-               }}
-             />
-           </Box>
-         
-           {/* Description */}
-           <Typography
-             variant="body2"
-             color="text.secondary"
-             sx={{ mb: 2, minHeight: 48 }}
-           >
-             {job.description?.slice(0, 80)}...
-           </Typography>
-         
-           {/* Buttons */}
-           <Box display="flex" justifyContent="space-between">
-             <Button
-               component={Link}
-               to={`/jobs/${job._id}`}
-               size="small"
-               variant="contained"
-               sx={{
-                 background: 'linear-gradient(to right, #7A5FFF, #6242FF)',
-                 textTransform: 'none',
-                 borderRadius: 2,
-                 fontWeight: 500,
-                 fontSize: 13,
-                 px: 2,
-                 py: 0.5,
-                 '&:hover': {
-                   background: 'linear-gradient(to right, #6242FF, #7A5FFF)',
-                 },
-               }}
-             >
-               Apply Now
-             </Button>
-         
-             <Button
-               component={Link}
-               to={`/jobs/${job._id}`}
-               size="small"
-               variant="outlined"
-               sx={{
-                 borderColor: '#7A5FFF',
-                 color: '#7A5FFF',
-                 textTransform: 'none',
-                 borderRadius: 2,
-                 fontWeight: 500,
-                 fontSize: 13,
-                 px: 2,
-                 py: 0.5,
-                 '&:hover': {
-                   backgroundColor: '#ede9fe',
-                   borderColor: '#7A5FFF',
-                 },
-               }}
-             >
-               View Details
-             </Button>
-           </Box>
-         </Card>
-         
-          ))}
+            <JobCard
+            key={job._id}
+            job={job}
+            saved={savedJobs.includes(job._id)}
+            onToggleSave={toggleSaveJob}
+            />
+            ))}
         </Box>
 
         {filteredJobs.length === 0 && (

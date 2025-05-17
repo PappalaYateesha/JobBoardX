@@ -1,21 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from '../services/axiosInstance';
-import {Accordion,AccordionSummary,AccordionDetails,Box,Button,Chip,Container,Typography,TextField,MenuItem,Select,InputLabel,FormControl,Pagination
-} from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-
-const statusColor = (status: string) => {
-  switch (status) {
-    case 'Reviewed':
-      return 'info';
-    case 'Accepted':
-      return 'success';
-    case 'Rejected':
-      return 'error';
-    default:
-      return 'default';
-  }
-};
+import {Box,Button,Container,Typography} from '@mui/material';
+import ApplicationFilters from '../components/ApplicationFilters';
+import ApplicationItem from '../components/ApplicationItem';
+import PaginationControl from '../components/PaginationControl';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -97,39 +85,14 @@ const MyApplications = () => {
       </Typography>
 
       {/* Filters */}
-      <Box display="flex" gap={2} flexWrap="wrap" mt={2}>
-        <TextField
-          label="Search by Title"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <FormControl sx={{ minWidth: 120 }}>
-          <InputLabel>Status</InputLabel>
-          <Select
-            value={statusFilter}
-            label="Status"
-            onChange={(e) => setStatusFilter(e.target.value)}
-          >
-            <MenuItem value="All">All</MenuItem>
-            <MenuItem value="Accepted">Accepted</MenuItem>
-            <MenuItem value="Rejected">Rejected</MenuItem>
-            <MenuItem value="Reviewed">Reviewed</MenuItem>
-          </Select>
-        </FormControl>
-        <FormControl sx={{ minWidth: 120 }}>
-          <InputLabel>Sort By</InputLabel>
-          <Select
-            value={sortOption}
-            label="Sort By"
-            onChange={(e) => setSortOption(e.target.value)}
-          >
-            <MenuItem value="Newest">Newest</MenuItem>
-            <MenuItem value="Oldest">Oldest</MenuItem>
-            <MenuItem value="Title">Title</MenuItem>
-            <MenuItem value="Company">Company</MenuItem>
-          </Select>
-        </FormControl>
-      </Box>
+      <ApplicationFilters
+      searchTerm={searchTerm}
+      setSearchTerm={setSearchTerm}
+      statusFilter={statusFilter}
+      setStatusFilter={setStatusFilter}
+      sortOption={sortOption}
+      setSortOption={setSortOption}
+      />
 
       {/* Accordion List or Empty State */}
       <Box mt={4}>
@@ -155,97 +118,22 @@ const MyApplications = () => {
             </Button>
           </Box>
         ) : (
-          paginatedApps.map((app) => (
-            <Accordion
-              key={app._id}
-              sx={{
-                mb: 2,
-                borderRadius: 3,
-                background: 'rgba(255, 255, 255, 0.1)',
-                backdropFilter: 'blur(10px)',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                '&::before': { display: 'none' },
-              }}
-            >
-              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <Box flex={1}>
-                  <Typography fontWeight={600}>
-                    {app.job?.title || 'Job no longer available'}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {app.job?.company || 'This job has been removed or closed'}
-                  </Typography>
-                </Box>
-                <Chip
-                  label={app.status}
-                  color={statusColor(app.status)}
-                  size="small"
-                  sx={{ ml: 2 }}
-                />
-              </AccordionSummary>
-
-              <AccordionDetails>
-                <Typography variant="body2" gutterBottom>
-                  Applied on: {new Date(app.createdAt).toLocaleDateString()}
-                </Typography>
-
-                <Typography variant="body2" gutterBottom>
-                  Cover Letter:
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {app.coverLetter || 'No cover letter provided.'}
-                </Typography>
-
-                {app.job ? (
-                  <>
-                    {app.resumeLink && (
-                      <Button
-                        variant="contained"
-                        href={app.resumeLink}
-                        target="_blank"
-                        sx={{ mt: 2 }}
-                      >
-                        View Resume
-                      </Button>
-                    )}
-                    <Button
-                      variant="outlined"
-                      color="primary"
-                      href={`/jobs?search=${encodeURIComponent(app.job.title || '')}`}
-                      sx={{ mt: 2, ml: 2 }}
-                    >
-                      Find Similar Jobs
-                    </Button>
-                  </>
-                ) : (
-                  <Box mt={2}>
-                    <Typography variant="body2" color="error">
-                      The job associated with this application is no longer available.
-                    </Typography>
-                    <Button
-                      variant="outlined"
-                      color="error"
-                      sx={{ mt: 2 }}
-                      onClick={() => handleDeleteApplication(app._id)}
-                    >
-                      Remove from My Applications
-                    </Button>
-                  </Box>
-                )}
-              </AccordionDetails>
-            </Accordion>
-          ))
+         paginatedApps.map((app) => (
+         <ApplicationItem key={app._id} app={app} onDelete={handleDeleteApplication} />
+        )) 
         )}
       </Box>
 
       {/* Pagination */}
       {filteredApps.length > 0 && (
         <Box mt={4} display="flex" justifyContent="center">
-          <Pagination
-            count={Math.ceil(filteredApps.length / ITEMS_PER_PAGE)}
-            page={page}
-            onChange={(_, value) => setPage(value)}
+          <PaginationControl
+          currentPage={page}
+          totalItems={filteredApps.length}
+          itemsPerPage={ITEMS_PER_PAGE}
+          onPageChange={setPage}
           />
+
         </Box>
       )}
     </Container>

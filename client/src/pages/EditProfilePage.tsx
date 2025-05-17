@@ -1,18 +1,14 @@
 
 import React, { useEffect, useState } from 'react';
-import {
-  Box, Typography, Paper, CircularProgress, Divider,
-  Button, Stack, TextField, IconButton, Chip, InputAdornment,
-  Snackbar, Checkbox, FormControlLabel
-} from '@mui/material';
+import {Box, Typography, Paper, CircularProgress, Divider,Button,Snackbar} from '@mui/material';
 import { Formik, Form, FieldArray } from 'formik';
 import * as Yup from 'yup';
 import axios from "../services/axiosInstance"
 import { useNavigate } from 'react-router-dom';
-import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add';
-import { getIn } from 'formik';
-import { Profile, Experience, Education } from '../services/Profile';
+import { Profile} from '../services/Profile';
+import SkillsFieldArray from '../components/EditSkills';
+import ProfileFormFields from '../components/EditProfileform';
+import ExperienceEducationFieldArray from '../components/EditEduExp';
 
 const EditProfilePage = () => {
   const navigate = useNavigate();
@@ -160,194 +156,43 @@ const EditProfilePage = () => {
           }}
         >
           {({ values, handleChange, errors, touched, isSubmitting, setFieldValue }) => (
-            <Form noValidate>
-              {['headline', 'bio', 'phone', 'location', 'website', 'linkedin', 'github'].map((field) => (
-                <TextField
-                  key={field}
-                  fullWidth
-                  name={field}
-                  label={field.charAt(0).toUpperCase() + field.slice(1)}
-                  value={(values as any)[field]}
-                  onChange={handleChange}
-                  error={Boolean(getIn(touched, field) && getIn(errors, field))}
-                  helperText={getIn(touched, field) && getIn(errors, field)}
-                  variant="outlined"
-                  margin="normal"
-                />
-              ))}
+            
+             <Form noValidate>
+      <ProfileFormFields
+        values={values}
+        handleChange={handleChange}
+        errors={errors}
+        touched={touched}
+      />
 
-              <FieldArray name="skills">
-                {(arrayHelpers) => (
-                  <Stack spacing={1} mt={2}>
-                    <Typography variant="h6">Skills</Typography>
-                    <Stack direction="row" flexWrap="wrap" spacing={1}>
-                      {values.skills.map((skill, index) => (
-                        <Chip
-                          key={index}
-                          label={skill}
-                          onDelete={() => arrayHelpers.remove(index)}
-                          color="primary"
-                        />
-                      ))}
-                    </Stack>
-                    <TextField
-                      fullWidth
-                      placeholder="Add a skill"
-                      value={newSkill}
-                      onChange={(e) => setNewSkill(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' && newSkill.trim()) {
-                          e.preventDefault();
-                          arrayHelpers.push(newSkill.trim());
-                          setNewSkill('');
-                        }
-                      }}
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton onClick={() => {
-                              if (newSkill.trim()) {
-                                arrayHelpers.push(newSkill.trim());
-                                setNewSkill('');
-                              }
-                            }}>
-                              <AddIcon />
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                  </Stack>
-                )}
-              </FieldArray>
+      <FieldArray name="skills">
+        {(arrayHelpers) => (
+          <SkillsFieldArray
+            skills={values.skills}
+            newSkill={newSkill}
+            setNewSkill={setNewSkill}
+            arrayHelpers={arrayHelpers}
+          />
+        )}
+      </FieldArray>
 
-              <FieldArray name="experience">
-                {(arrayHelpers) => (
-                  <Stack spacing={2} mt={3}>
-                    <Typography variant="h6">Experience</Typography>
-                    {values.experience.map((exp: Experience, index: number) => (
-                      <Box key={index} sx={{ border: '1px solid #ddd', p: 2, borderRadius: 2 }}>
-                        <Stack spacing={2}>
-                          {['title', 'company', 'location', 'description'].map((field) => (
-                            <TextField
-                              key={field}
-                              fullWidth
-                              label={field.charAt(0).toUpperCase() + field.slice(1)}
-                              name={`experience[${index}].${field}`}
-                              value={exp[field as keyof Experience]}
-                              onChange={handleChange}
-                              error={Boolean(getIn(touched, `experience[${index}].${field}`) && getIn(errors, `experience[${index}].${field}`))}
-                              helperText={getIn(touched, `experience[${index}].${field}`) && getIn(errors, `experience[${index}].${field}`)}
-                            />
-                          ))}
-                          <Stack direction="row" spacing={2}>
-                            <TextField
-                              label="From"
-                              type="date"
-                              InputLabelProps={{ shrink: true }}
-                              name={`experience[${index}].from`}
-                              value={exp.from}
-                              onChange={handleChange}
-                              inputProps={{ max: new Date().toISOString().split('T')[0] }}
-                            />
-                            <TextField
-                              label="To"
-                              type="date"
-                              InputLabelProps={{ shrink: true }}
-                              name={`experience[${index}].to`}
-                              value={exp.to}
-                              onChange={handleChange}
-                              disabled={exp.current}
-                              inputProps={{ max: new Date().toISOString().split('T')[0] }}
-                            />
-                          </Stack>
-                          <FormControlLabel
-                            control={
-                              <Checkbox
-                                checked={exp.current}
-                                onChange={(e) => setFieldValue(`experience[${index}].current`, e.target.checked)}
-                              />
-                            }
-                            label="Current"
-                          />
-                          <Button variant="text" color="error" onClick={() => arrayHelpers.remove(index)} startIcon={<DeleteIcon />}>
-                            Remove
-                          </Button>
-                        </Stack>
-                      </Box>
-                    ))}
-                    <Button variant="outlined" startIcon={<AddIcon />} onClick={() =>
-                      arrayHelpers.push({ title: '', company: '', location: '', from: '', to: '', current: false, description: '' })
-                    }>
-                      Add Experience
-                    </Button>
-                  </Stack>
-                )}
-              </FieldArray>
-
-              <FieldArray name="education">
-                {(arrayHelpers) => (
-                  <Stack spacing={2} mt={3}>
-                    <Typography variant="h6">Education</Typography>
-                    {values.education.map((edu: Education, index: number) => (
-                      <Box key={index} sx={{ border: '1px solid #ddd', p: 2, borderRadius: 2 }}>
-                        <Stack spacing={2}>
-                          {['school', 'degree', 'fieldOfStudy', 'description'].map((field) => (
-                            <TextField
-                              key={field}
-                              fullWidth
-                              label={field.charAt(0).toUpperCase() + field.slice(1)}
-                              name={`education[${index}].${field}`}
-                              value={edu[field as keyof Education]}
-                              onChange={handleChange}
-                              error={Boolean(getIn(touched, `education[${index}].${field}`) && getIn(errors, `education[${index}].${field}`))}
-                              helperText={getIn(touched, `education[${index}].${field}`) && getIn(errors, `education[${index}].${field}`)}
-                            />
-                          ))}
-                          <Stack direction="row" spacing={2}>
-                            <TextField
-                              label="From"
-                              type="date"
-                              InputLabelProps={{ shrink: true }}
-                              name={`education[${index}].from`}
-                              value={edu.from}
-                              onChange={handleChange}
-                              inputProps={{ max: new Date().toISOString().split('T')[0] }}
-                            />
-                            <TextField
-                              label="To"
-                              type="date"
-                              InputLabelProps={{ shrink: true }}
-                              name={`education[${index}].to`}
-                              value={edu.to}
-                              onChange={handleChange}
-                              disabled={edu.current}
-                              inputProps={{ max: new Date().toISOString().split('T')[0] }}
-                            />
-                          </Stack>
-                          <FormControlLabel
-                            control={
-                              <Checkbox
-                                checked={edu.current}
-                                onChange={(e) => setFieldValue(`education[${index}].current`, e.target.checked)}
-                              />
-                            }
-                            label="Current"
-                          />
-                          <Button variant="text" color="error" onClick={() => arrayHelpers.remove(index)} startIcon={<DeleteIcon />}>
-                            Remove
-                          </Button>
-                        </Stack>
-                      </Box>
-                    ))}
-                    <Button variant="outlined" startIcon={<AddIcon />} onClick={() =>
-                      arrayHelpers.push({ school: '', degree: '', fieldOfStudy: '', from: '', to: '', current: false, description: '' })
-                    }>
-                      Add Education
-                    </Button>
-                  </Stack>
-                )}
-              </FieldArray>
+      <FieldArray name="experience">
+        {(experienceHelpers) => (
+          <FieldArray name="education">
+            {(educationHelpers) => (
+              <ExperienceEducationFieldArray
+                values={{ experience: values.experience, education: values.education }}
+                errors={errors}
+                touched={touched}
+                handleChange={handleChange}
+                setFieldValue={setFieldValue}
+                experienceHelpers={experienceHelpers}
+                educationHelpers={educationHelpers}
+              />
+            )}
+          </FieldArray>
+        )}
+      </FieldArray>  
 
               <Box mt={4}>
                 <Button type="submit" variant="contained" color="primary" disabled={isSubmitting}>
